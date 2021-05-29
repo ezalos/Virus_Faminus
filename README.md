@@ -2,7 +2,7 @@
 
 This virus is coded only for academic purposes, and is:
 
- - Inoffensif, as it only add a write("HelloWorld")
+ - Inoffensif, as it only add an infection routine
  - Easily detectable by modern technics
 
 # Pseudocode
