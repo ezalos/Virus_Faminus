@@ -27,6 +27,7 @@
 # include <time.h>
 # include <sys/mman.h>
 # include <stdarg.h>
+# include <dirent.h>
 
 # define DEBUG		0
 
