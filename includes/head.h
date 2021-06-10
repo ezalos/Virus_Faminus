@@ -6,7 +6,7 @@
 /*   By: ezalos <ezalos@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/12 11:15:02 by ldevelle          #+#    #+#             */
-/*   Updated: 2021/06/10 10:22:54 by ezalos           ###   ########.fr       */
+/*   Updated: 2021/06/10 11:00:44 by ezalos           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,6 @@ extern int debug_level;
 **	PROTOTYPES
 */
 
-// # include "prototypes_woody_woodpacker.h"
+# include "prototypes_Famine.h"
 
 #endif

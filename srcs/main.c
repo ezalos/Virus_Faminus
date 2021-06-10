@@ -49,7 +49,19 @@ void		infect_dir(char *dir_path, uint8_t *start_virus)
 
 int			main(int ac, char **av)
 {
-	(void)ac;
-	(void)av;
+	ssize_t size;
+	uint8_t *content;
+
 	printf("Hello World!\n");
+
+	if (ac < 2)
+	{
+		printf("usage: %s path_to_file_to_infect\n", av[0]);
+		return (FAILURE);
+	}
+	content = access_file(av[1], &size);
+	if (!check_elf_header(content, size))
+		return (FAILURE);
+	printf("Wesh wesh !\n");
+	return (0);
 }
