@@ -1,0 +1,7 @@
+.devconatiner
+*.o
+.gdb_history
+peda
+peda-session*
+dump*
+Famine
