@@ -5,6 +5,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # APT packages
 RUN apt-get update && apt-get upgrade -y \
+	&& apt-get install build-essential -y \
+	&& apt-get install build-essential -y \
+	&& apt-get install -y nasm \
 	&& apt-get install software-properties-common apt-utils vim git wget curl unzip neovim neofetch sudo -y \
 	&& add-apt-repository ppa:deadsnakes/ppa \
 	&& apt-get update \

@@ -19,32 +19,6 @@ int8_t		is_secure_access(uint64_t file_size, uint64_t offset, uint64_t access_si
 	return (TRUE);
 }
 
-uint8_t		*access_file(char *file, ssize_t *size)
-{
-	int fd;
-	uint8_t	*content;
-
-	if ((fd = open(file, O_RDONLY)) < 0)
-		return (NULL); // TODO: check security
-	if ((*size = lseek(fd, 0L, SEEK_END)) == -1)
-	{
-		close(fd);
-		return (NULL); // TODO: check security
-	}
-	if ((content = (uint8_t *)mmap(0,
-									(size_t)*size,
-									PROT_READ | PROT_WRITE,
-									MAP_PRIVATE,
-									fd,
-									0)) == MAP_FAILED)
-	{
-		close(fd);
-		return (NULL); // TODO: check security
-	}
-	close(fd);
-	return (content);
-}
-
 int8_t		check_elf_header(uint8_t *content, size_t size)
 {
 	Elf64_Ehdr *ehdr;
@@ -59,5 +33,58 @@ int8_t		check_elf_header(uint8_t *content, size_t size)
 	return (FAILURE);
 	if (ehdr->e_ident[EI_DATA] != ELFDATA2LSB)
 		return (FAILURE); // TODO: check security
+	if ((((size_t)((Elf64_Ehdr *)content)->e_phentsize)
+		* ((size_t)((Elf64_Ehdr *)content)->e_phnum)
+		+ ((Elf64_Ehdr *)content)->e_phoff)
+		> size)
+		return (FAILURE); // TODO: check security
 	return (SUCCESS);
+}
+
+Elf64_Phdr	*get_program_header(void *file, uint32_t index)
+{
+    Elf64_Ehdr *elf;
+    Elf64_Phdr *phdr;
+
+    elf = (Elf64_Ehdr *)file;
+	phdr = (Elf64_Phdr *)((size_t)file + (size_t)elf->e_phoff + ((size_t)index * (size_t)elf->e_phentsize));
+
+	if (index >= elf->e_phnum)
+        phdr = NULL;
+
+    return phdr;
+}
+
+
+Elf64_Phdr	*find_phdr(void *file, size_t file_size)
+{
+    Elf64_Phdr	*phdr;
+	int			i;
+
+	printf("%s\n", __func__);
+	if (FAILURE == check_elf_header(file, file_size))
+		return NULL;
+
+	phdr = NULL;
+	i = -1;
+	while (++i < ((Elf64_Ehdr *)file)->e_phnum)
+	{
+		phdr = get_program_header(file, i);
+		// check phdr not outside file
+		if (phdr)
+		{
+			if (phdr->p_type == PT_LOAD)
+				// && phdr->p_flags & flags = flags)
+				if (phdr->p_filesz < phdr->p_memsz)
+				{
+					printf("Found phdr");
+					return phdr;
+				}
+		}
+	}
+	return phdr;
+	// for phdr in phdr_array:
+	// 	if last_loadable:
+	// 		best_phdr = phdr;
+	// return best_phdr;
 }
