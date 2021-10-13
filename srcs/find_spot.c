@@ -30,7 +30,6 @@ int8_t		check_elf_header(uint8_t *content, size_t size)
 		return (FAILURE); // TODO: check security
 	if (ehdr->e_ident[EI_CLASS] != ELFCLASS64)
 		return (FAILURE); // TODO: check security
-	return (FAILURE);
 	if (ehdr->e_ident[EI_DATA] != ELFDATA2LSB)
 		return (FAILURE); // TODO: check security
 	if ((((size_t)((Elf64_Ehdr *)content)->e_phentsize)
@@ -62,8 +61,9 @@ Elf64_Phdr	*find_phdr(void *file, size_t file_size)
 	int			i;
 
 	printf("%s\n", __func__);
-	if (FAILURE == check_elf_header(file, file_size))
-		return NULL;
+	(void)file_size;
+	// if (FAILURE == check_elf_header(file, file_size))
+	// 	return NULL;
 
 	phdr = NULL;
 	i = -1;
@@ -77,7 +77,7 @@ Elf64_Phdr	*find_phdr(void *file, size_t file_size)
 				// && phdr->p_flags & flags = flags)
 				if (phdr->p_filesz < phdr->p_memsz)
 				{
-					printf("Found phdr");
+					printf("Found phdr\n");
 					return phdr;
 				}
 		}

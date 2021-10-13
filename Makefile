@@ -94,7 +94,6 @@ ifneq "$(SUPPORTS_MAKE_ARGS)" ""
 endif
 
 run: $(NAME)
-	rm -f $(PACKED)
 	./$(NAME) $(COMMAND_ARGS)
 
 prototypes:
